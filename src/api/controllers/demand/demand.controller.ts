@@ -27,14 +27,19 @@ export class DemandController extends BaseHttpController {
   }
 
   @httpPost('/create')
-  private async create(@requestBody() body: Demand) {
-    const result = await this.demandService.create(body);
-    return this.ok(result);
+  private async create(
+    @requestBody()
+    body: {
+      products: Array<{ productGuid: string; amount: number }>;
+    }
+  ) {
+    await this.demandService.create(body);
+    return this.ok({ status: true });
   }
 
-  @httpDelete('/delete/:guid')
-  private async delete(@requestParam('guid') guid: string) {
-    const result = await this.demandService.delete(guid);
+  @httpDelete('/delete/:demandGuid')
+  private async delete(@requestParam('demandGuid') demandGuid: string) {
+    const result = await this.demandService.delete(demandGuid);
     return this.ok(result);
   }
 }

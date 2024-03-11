@@ -13,14 +13,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       Int      @id @default(autoincrement())
-  guid     String   @unique @default(uuid())
-  username String 
-  email    String
-  password String 
-  demands Demand[]
-}
 
 model Product {
   id          Int      @id @default(autoincrement())
@@ -28,18 +20,39 @@ model Product {
   description String
   saleValue   Float
   stock       Float
-  // TODO: Adicionar Imagem
-  // image       Bytes
-  demands     Demand[]
+  active      Boolean @default(true)
+
+  productImages  ProductImage[]
+  demandProducts DemandProduct[]
+}
+
+model ProductImage {
+  id          Int      @id @default(autoincrement())
+  guid        String   @unique @default(uuid())
+  name        String
+  mimeType    String
+  image       Bytes
+  
+  productId   Int
+  product     Product @relation(fields: [productId], references: [id])
 }
 
 model Demand {
   id        Int     @id @default(autoincrement())
   guid      String  @unique @default(uuid())
-  user      User    @relation(fields: [userId], references: [id])
-  userId    Int
-  product   Product @relation(fields: [productId], references: [id])
-  productId Int
+
+  demandProducts DemandProduct[]
+}
+
+model DemandProduct {
+  id        Int     @id @default(autoincrement())
+  guid      String  @unique @default(uuid())
   amount    Float
   data      DateTime
+  
+  demandId  Int
+  demand    Demand @relation(fields: [demandId], references: [id])
+  
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
 }
